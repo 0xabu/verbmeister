@@ -1,7 +1,13 @@
-import pandas as pd
-import random
-from datetime import datetime
 import csv
+from dataclasses import dataclass
+from datetime import datetime
+import random
+
+@dataclass(frozen=True)
+class Question:
+    infinitiv: str
+    form: str
+    verb: str
 
 # Function definitions (save_misspelt_verbs, load_misspelt_verbs, save_high_scores, load_high_scores, parse_timestamp, is_correct_answer)
 
@@ -59,9 +65,16 @@ def parse_timestamp(timestamp_str):
 def is_correct_answer(player_answer, correct_answers):
     return player_answer.lower() in [verb.lower() for verb in correct_answers]
 
+def get_correct_answers(data, infinitiv, form):
+    # Pandas version: data[(data['Infinitiv'] == infinitiv) & (data['Form'] == form)]['Verb'].unique()
+    return set([d.verb for d in data if d.infinitiv == infinitiv and d.form == form])
+
 
 # Load the CSV file for the game data
-df = pd.read_csv('table_data.csv')
+df: list[Question] = []
+with open('table_data.csv') as fh:
+    for entry in csv.DictReader(fh):
+        df.append(Question(**entry))
 
 # Initialize high scores and misspelt verbs
 high_scores = load_high_scores()
@@ -77,7 +90,7 @@ while lives > 0:
     # Use a list of keys to iterate over to avoid RuntimeError
     for (infinitiv, form) in list(misspelt_verbs.keys()):
         # Find all correct verbs for the given infinitiv and form
-        correct_verbs = df[(df['Infinitiv'] == infinitiv) & (df['Form'] == form)]['Verb'].unique()
+        correct_verbs = get_correct_answers(df, infinitiv, form)
 
         # Ask the player and ensure they provide a non-empty answer
         player_answer = ""
@@ -112,30 +125,29 @@ while lives > 0:
     # Continue with new random verbs from the full list
     while lives > 0:
         # Randomly select a row from the dataframe
-        row = df.sample().iloc[0]
-        infinitiv, form = row['Infinitiv'], row['Form']
-        correct_verbs = df[(df['Infinitiv'] == infinitiv) & (df['Form'] == form)]['Verb'].unique()
+        row = random.choice(df)
+        correct_verbs = get_correct_answers(df, row.infinitiv, row.form)
 
         # Ask the player and ensure they provide a non-empty answer
         player_answer = ""
         while not player_answer.strip():
-            print(f"\n{infinitiv}")
-            player_answer = input(f"{form} ").strip()
+            print(f"\n{row.infinitiv}")
+            player_answer = input(f"{row.form} ").strip()
 
         # Check the answer
         if is_correct_answer(player_answer, correct_verbs):
             score += 1
             print("Richtig! Punktestand:", score)
             # Update misspelt_verbs if correct
-            if (infinitiv, form) in misspelt_verbs:
-                misspelt_verbs[(infinitiv, form)]['CorrectCount'] += 1
-                if misspelt_verbs[(infinitiv, form)]['CorrectCount'] >= 7:
-                    del misspelt_verbs[(infinitiv, form)]
+            if (row.infinitiv, row.form) in misspelt_verbs:
+                misspelt_verbs[(row.infinitiv, row.form)]['CorrectCount'] += 1
+                if misspelt_verbs[(row.infinitiv, row.form)]['CorrectCount'] >= 7:
+                    del misspelt_verbs[(row.infinitiv, row.form)]
         else:
             lives -= 1
             print(f"Falsch! Richtige Antworten enthalten: {'/'.join(correct_verbs)}. Du hast nur noch {lives} Leben!")
             # Update misspelt_verbs if wrong
-            misspelt_verbs[(infinitiv, form)] = {'Verb': '/'.join(correct_verbs), 'CorrectCount': 0}
+            misspelt_verbs[(row.infinitiv, row.form)] = {'Verb': '/'.join(correct_verbs), 'CorrectCount': 0}
 
         if lives <= 0:
             break
