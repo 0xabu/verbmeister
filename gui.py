@@ -53,8 +53,6 @@ class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.game = Game()
-
         self.title("VerbMeister Blitz")
 
         self.verb = tk.StringVar()
@@ -63,8 +61,8 @@ class Application(tk.Tk):
         self.input = tk.StringVar()
         self.button_label = tk.StringVar()
         self.response = tk.StringVar()
-        self.points = tk.IntVar(value=0)
-        self.lives = tk.IntVar(value=3)
+        self.points = tk.IntVar()
+        self.lives = tk.IntVar()
 
         headerframe = ttk.Frame(self)
         headerframe.grid(row=0, column=0, padx=5, pady=5, sticky=tk.NSEW)
@@ -100,6 +98,12 @@ class Application(tk.Tk):
         self.input_entry.focus()
         self.bind("<Return>", self.button_press)
 
+        self.new_game()
+
+    def new_game(self):
+        self.points.set(0)
+        self.lives.set(3)
+        self.game = Game()
         self.render_question()
 
     def button_press(self, *args):
@@ -160,7 +164,11 @@ class Application(tk.Tk):
             hs = HighScores()
             hs.update(d.result, score)
             HighScoreDialog(hs.format(), self)
-        self.destroy()
+        resp = messagebox.askquestion(title = 'Spiel Aus!', message="Noch ein Spiel?")
+        if resp == 'yes':
+            self.new_game()
+        else:
+            self.destroy()
 
 
 if __name__ == "__main__":
