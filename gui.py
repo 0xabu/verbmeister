@@ -96,6 +96,7 @@ class Application(tk.Tk):
 
         ttk.Button(footframe, textvariable=self.button_label, command=self.button_press, width=6).grid(row=0, column=1, sticky=tk.E, padx=5)
 
+        self.input.trace_add("write", self.input_write)
         self.input_entry.focus()
         self.bind("<Return>", self.button_press)
 
@@ -117,6 +118,20 @@ class Application(tk.Tk):
             self.game_over(self.points.get())
         else:
             self.render_question()
+
+    def input_write(self, name: str, index: str, mode: str) -> None:
+        # make it easy to write umlauts on a US keyboard
+        def get_umlaut(s: str) -> str | None:
+            match s:
+                case '"a':  return 'ä'
+                case '"e':  return 'ë'
+                case '"o':  return 'ö'
+                case '"u':  return 'ü'
+                case _:     return None
+
+        text = self.input.get()
+        if (umlaut := get_umlaut(text[-2:])):
+            self.input.set(text[:-2] + umlaut)
 
     def render_question(self) -> None:
         self.current_question = self.game.get_next_question()
