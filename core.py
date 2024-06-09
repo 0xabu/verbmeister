@@ -114,16 +114,15 @@ class HighScores:
 
     def format(self) -> str:
         # Format high scores
-        max_name_length = max(len(name) for name in self.scores.keys())
-        header_format = "{:<" + str(max_name_length) + "} {:>10} {:>15}"
-        lines = [header_format.format("Name", "Punkte", "Datum")]  # Header
+        max_name_length = max(4, max(len(name) for name in self.scores.keys()))
+        line_format = "{:<" + str(max_name_length) + "}  {:>6}  {:>6}"
+        lines = [line_format.format("Name", "Punkte", "Datum")]  # Header
 
         # Sort and limit to top 10 scores
         top_scores = sorted(self.scores.items(), key=lambda x: x[1][0], reverse=True)[:10]
 
         for name, (high_score, timestamp) in top_scores:
             date = datetime.strptime(timestamp, HIGHSCORE_DATE_FORMAT).strftime("%b %d")
-            line_format = "{:<" + str(max_name_length) + "} {:>10} {:>15}"
             lines.append(line_format.format(name, high_score, date))
 
         return '\n'.join(lines)

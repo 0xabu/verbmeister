@@ -77,19 +77,19 @@ class Application(tk.Tk):
         bodyframe.grid(row=1, column=0, padx=5, pady=5, sticky=tk.NSEW)
         bodyframe.grid_columnconfigure([0,1], weight=1)
 
-        ttk.Label(bodyframe, textvariable=self.verb).grid(row=0, column=0, columnspan=2, padx=5, pady=2)
-        ttk.Label(bodyframe, textvariable=self.verbform, font='TkHeadingFont').grid(row=1, column=0, columnspan=2)
+        ttk.Label(bodyframe, textvariable=self.verb, font=('TkDefaultFont', 18)).grid(row=0, column=0, columnspan=2, padx=5, pady=2)
+        ttk.Label(bodyframe, textvariable=self.verbform).grid(row=1, column=0, columnspan=2)
 
-        ttk.Label(bodyframe, textvariable=self.question).grid(row=2, column=0, sticky=tk.E)
+        ttk.Label(bodyframe, textvariable=self.question).grid(row=2, column=0, sticky=tk.E, pady=10)
         self.input_entry = ttk.Entry(bodyframe, width=7, textvariable=self.input)
-        self.input_entry.grid(row=2, column=1, sticky=tk.EW)
+        self.input_entry.grid(row=2, column=1, sticky=tk.EW, pady=10)
 
         footframe = ttk.Frame(self)
         footframe.grid(row=2, column=0, padx=5, pady=5, sticky=tk.NSEW)
         footframe.grid_columnconfigure(0, weight=1)
 
-        self.response_label = ttk.Label(footframe, textvariable=self.response, width=20)
-        self.response_label.grid(row=0, column=0)
+        self.response_label = ttk.Label(footframe, textvariable=self.response, width=16)
+        self.response_label.grid(row=0, column=0, sticky=tk.EW, padx=5)
 
         ttk.Button(footframe, textvariable=self.button_label, command=self.button_press, width=6).grid(row=0, column=1, sticky=tk.E, padx=5)
 
