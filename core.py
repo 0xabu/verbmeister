@@ -1,3 +1,4 @@
+from collections import defaultdict
 import csv
 import dataclasses
 from dataclasses import dataclass
@@ -8,11 +9,12 @@ import random
 class VerbForm:
     infinitiv: str
     form: str
-    example: str
 
 @dataclass(frozen=True)
-class Solution(VerbForm):
-    verb: str
+class Question:
+    verbform: VerbForm
+    example: str
+    english: str
 
 MISSPELT_FILENAME = 'misspelt_verbs.csv'
 MISSPELT_COUNT_FIELDNAME = 'correct_count'
@@ -23,26 +25,29 @@ HIGHSCORE_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 class Game:
     def __init__(self) -> None:
-        self.problems: list[Solution]
+        self.questions: list[Question] = []
+        self.answers: dict[VerbForm, set[str]] = defaultdict(set)
         self.misspelt_verbs: dict[VerbForm, int]
 
-        self.load_problems()
+        self.load_data()
         self.load_misspelt_verbs()
 
         # we start by repeating the misspelt verbs
-        self.initial_questions = list(self.misspelt_verbs.keys())
+        self.initial_questions: list[Question] = []
+        for vf in self.misspelt_verbs.keys():
+            self.initial_questions.extend(q for q in self.questions if vf == q.verbform)
         random.shuffle(self.initial_questions)
 
-    def load_problems(self) -> None:
+    def load_data(self) -> None:
         # Load the CSV file for the game data
-        self.problems = []
         with open('table_data.csv') as fh:
             for entry in csv.DictReader(fh):
-                s = Solution(**entry)
+                q = Question(VerbForm(entry['infinitiv'], entry['form']), entry['example'], entry['englisch'])
 
                 # temporarily skip Konjunktiv II
-                if not s.form.startswith('Konjunktiv'):
-                    self.problems.append(s)
+                if not q.verbform.form.startswith('Konjunktiv'):
+                    self.questions.append(q)
+                    self.answers[q.verbform].add(entry['verb'])
 
     # Function to save misspelt verbs
     def save_misspelt_verbs(self) -> None:
@@ -63,16 +68,16 @@ class Game:
         except FileNotFoundError:
             pass  # No file to load, continue with an empty dict
 
-    def get_next_question(self) -> VerbForm:
+    def get_next_question(self) -> Question:
         try:
             return self.initial_questions.pop()
         except IndexError:
-            return random.choice(self.problems)
+            return random.choice(self.questions)
 
     def submit_answer(self, vf: VerbForm, player_answer: str) -> tuple[bool, set[str]]:
         need_save = False
-        correct_answers = set(p.verb for p in self.problems if p.infinitiv == vf.infinitiv and p.form == vf.form)
-        if is_correct := player_answer.lower() in [verb.lower() for verb in correct_answers]:
+        correct_answers = self.answers[vf]
+        if is_correct := player_answer.lower() in correct_answers:
             if vf in self.misspelt_verbs:
                 if self.misspelt_verbs[vf] > 5:
                     del self.misspelt_verbs[vf]

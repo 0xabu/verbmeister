@@ -12,16 +12,16 @@ def main() -> None:
 
     # Start of the game loop
     while lives > 0:
-        vf = game.get_next_question()
+        q = game.get_next_question()
 
         # Ask the player and ensure they provide a non-empty answer
         player_answer = ""
         while not player_answer.strip():
-            print(f"\n{vf.infinitiv}")
-            player_answer = input(f"{vf.form} Ez. {vf.example} ").strip()
+            print(f"\n{q.verbform.infinitiv}")
+            player_answer = input(f"{q.verbform.form} Ez. {q.example} ").strip()
 
         # Check the answer
-        ok, correct_verbs = game.submit_answer(vf, player_answer)
+        ok, correct_verbs = game.submit_answer(q.verbform, player_answer)
         if ok:
             score += 1
             print("Richtig! Punktestand:", score)

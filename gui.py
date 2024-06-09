@@ -12,20 +12,26 @@ class GameOverDialog(simpledialog.Dialog):
     def body(self, frame: tk.Frame) -> tk.Misc | None:
         ttk.Label(frame, text="Das Spiel ist aus!").grid(column=0, row=0, columnspan=2)
         ttk.Label(frame, text=f"Punktestand: {self.score}").grid(column=0, row=1, columnspan=2)
-        ttk.Label(frame, text="Name für High Score:").grid(column=0, row=2)
+
         self.name = tk.StringVar()
-        entry = ttk.Entry(frame, width=7, textvariable=self.name)
-        entry.grid(column=1, row=2)
-        return entry
+
+        if self.score:
+            ttk.Label(frame, text="Name für High Score:").grid(column=0, row=2)
+            entry = ttk.Entry(frame, width=7, textvariable=self.name)
+            entry.grid(column=1, row=2)
+            return entry
+        else:
+            return None
 
     def validate(self):
-        name = self.name.get()
-        if name:
-            self.result = name
-            return True
-        else:
-            messagebox.showwarning("Name war leer")
-            return False
+        if self.score:
+            name = self.name.get()
+            if name:
+                self.result = name
+                return True
+            else:
+                messagebox.showwarning(message="Name war leer")
+                return False
 
 class HighScoreDialog(simpledialog.Dialog):
     def __init__(self, text: str, parent: Optional[tk.Misc] = None) -> None:
@@ -56,6 +62,7 @@ class Application(tk.Tk):
 
         self.verb = tk.StringVar()
         self.verbform = tk.StringVar()
+        self.translation = tk.StringVar()
         self.question = tk.StringVar()
         self.input = tk.StringVar()
         self.button_label = tk.StringVar()
@@ -78,11 +85,12 @@ class Application(tk.Tk):
         bodyframe.grid_columnconfigure([0,1], weight=1)
 
         ttk.Label(bodyframe, textvariable=self.verb, font=('TkDefaultFont', 18)).grid(row=0, column=0, columnspan=2, padx=5, pady=2)
-        ttk.Label(bodyframe, textvariable=self.verbform).grid(row=1, column=0, columnspan=2)
+        ttk.Label(bodyframe, textvariable=self.translation).grid(row=1, column=0, columnspan=2, padx=5, pady=2)
+        ttk.Label(bodyframe, textvariable=self.verbform).grid(row=2, column=0, columnspan=2)
 
-        ttk.Label(bodyframe, textvariable=self.question).grid(row=2, column=0, sticky=tk.E, pady=10)
+        ttk.Label(bodyframe, textvariable=self.question).grid(row=3, column=0, sticky=tk.E, pady=10)
         self.input_entry = ttk.Entry(bodyframe, width=7, textvariable=self.input)
-        self.input_entry.grid(row=2, column=1, sticky=tk.EW, pady=10)
+        self.input_entry.grid(row=3, column=1, sticky=tk.EW, pady=10)
 
         footframe = ttk.Frame(self)
         footframe.grid(row=2, column=0, padx=5, pady=5, sticky=tk.NSEW)
@@ -132,14 +140,20 @@ class Application(tk.Tk):
                 case _:     return None
 
         text = self.input.get()
-        if (umlaut := get_umlaut(text[-2:])):
-            self.input.set(text[:-2] + umlaut)
+        i = 0
+        while i < len(text) - 1:
+            if (umlaut := get_umlaut(text[i:i+2])):
+                text = text[:i] + umlaut + text[i+2:]
+            i += 1
+        self.input.set(text)
 
     def render_question(self) -> None:
-        self.current_question = self.game.get_next_question()
-        self.verb.set(self.current_question.infinitiv)
-        self.verbform.set(self.current_question.form)
-        self.question.set(self.current_question.example.removesuffix(' …'))
+        q = self.game.get_next_question()
+        self.current_question = q.verbform
+        self.verb.set(q.verbform.infinitiv)
+        self.verbform.set(q.verbform.form)
+        self.translation.set(q.english)
+        self.question.set(q.example.removesuffix(' …'))
         self.input.set("")
         self.input_entry.config(state='enabled')
         self.input_entry.focus()
