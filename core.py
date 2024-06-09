@@ -38,7 +38,11 @@ class Game:
         self.problems = []
         with open('table_data.csv') as fh:
             for entry in csv.DictReader(fh):
-                self.problems.append(Solution(**entry))
+                s = Solution(**entry)
+
+                # temporarily skip Konjunktiv II
+                if not s.form.startswith('Konjunktiv'):
+                    self.problems.append(s)
 
     # Function to save misspelt verbs
     def save_misspelt_verbs(self) -> None:
@@ -84,6 +88,7 @@ class Game:
 
         return is_correct, correct_answers
 
+
 class HighScores:
     def __init__(self) -> None:
         self.scores: dict[str, tuple[int, str]]
@@ -114,8 +119,8 @@ class HighScores:
 
     def format(self) -> str:
         # Format high scores
-        max_name_length = max(4, max(len(name) for name in self.scores.keys()))
-        line_format = "{:<" + str(max_name_length) + "}  {:>6}  {:>6}"
+        name_length = min(14, max(4, max(len(name) for name in self.scores.keys())))
+        line_format = "{:<" + str(name_length) + ".14}  {:>6}  {:>6}"
         lines = [line_format.format("Name", "Punkte", "Datum")]  # Header
 
         # Sort and limit to top 10 scores

@@ -33,7 +33,7 @@ class HighScoreDialog(simpledialog.Dialog):
         super().__init__(parent, title="High Scores")
 
     def body(self, frame: tk.Frame) -> None:
-        t = tk.Text(frame, font='TkFixedFont', width=40, height=11, wrap="none")
+        t = tk.Text(frame, font='TkFixedFont', width=30, height=11, wrap="none")
         t.insert('end', self.hstext)
         t.config(state='disabled')
         t.grid()
@@ -94,7 +94,6 @@ class Application(tk.Tk):
         ttk.Button(footframe, textvariable=self.button_label, command=self.button_press, width=6).grid(row=0, column=1, sticky=tk.E, padx=5)
 
         self.input.trace_add("write", self.input_write)
-        self.input_entry.focus()
         self.bind("<Return>", self.button_press)
 
         self.new_game()
@@ -143,6 +142,7 @@ class Application(tk.Tk):
         self.question.set(self.current_question.example.removesuffix(' …'))
         self.input.set("")
         self.input_entry.config(state='enabled')
+        self.input_entry.focus()
         self.response.set("")
         self.button_label.set("Eingabe")
 
