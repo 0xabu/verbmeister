@@ -101,7 +101,7 @@ class HighScores:
     def load(self) -> None:
         self.scores = {}
         try:
-            with open(HIGHSCORE_FILENAME, 'r') as file:            
+            with open(HIGHSCORE_FILENAME, 'r') as file:
                 for name, score, timestamp in csv.reader(file):
                     self.scores[name] = (int(score), timestamp)
         except FileNotFoundError:
