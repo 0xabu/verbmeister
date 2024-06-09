@@ -51,7 +51,7 @@ class Game:
 
     # Function to save misspelt verbs
     def save_misspelt_verbs(self) -> None:
-        with open(MISSPELT_FILENAME, 'w', encoding='utf-8') as file:
+        with open(MISSPELT_FILENAME, 'w', encoding='utf-8', newline='') as file:
             writer = csv.DictWriter(file, MISSPELT_FIELDS, extrasaction='ignore')
             writer.writeheader()
             for verb, count in self.misspelt_verbs.items():
@@ -61,7 +61,7 @@ class Game:
     def load_misspelt_verbs(self) -> None:
         self.misspelt_verbs = {}
         try:
-            with open(MISSPELT_FILENAME, 'r', encoding='utf-8') as file:
+            with open(MISSPELT_FILENAME, 'r', encoding='utf-8', newline='') as file:
                 for row in csv.DictReader(file):
                     count = int(row.pop(MISSPELT_COUNT_FIELDNAME))
                     self.misspelt_verbs[VerbForm(**row)] = count
@@ -102,7 +102,7 @@ class HighScores:
     # Function to save high scores, sorted from highest to lowest
     def save(self) -> None:
         sorted_scores = sorted(self.scores.items(), key=lambda x: x[1][0], reverse=True)
-        with open(HIGHSCORE_FILENAME, 'w', encoding='utf-8') as file:
+        with open(HIGHSCORE_FILENAME, 'w', encoding='utf-8', newline='') as file:
             writer = csv.writer(file)
             for name, (score, timestamp) in sorted_scores:
                 writer.writerow((name, score, timestamp))
@@ -111,7 +111,7 @@ class HighScores:
     def load(self) -> None:
         self.scores = {}
         try:
-            with open(HIGHSCORE_FILENAME, 'r', encoding='utf-8') as file:
+            with open(HIGHSCORE_FILENAME, 'r', encoding='utf-8', newline='') as file:
                 for name, score, timestamp in csv.reader(file):
                     self.scores[name] = (int(score), timestamp)
         except FileNotFoundError:
