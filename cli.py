@@ -38,7 +38,7 @@ def main() -> None:
         high_scores.update(player_name, score)
 
     # Display high scores
-    print("\nHigh Scores:" + high_scores.format())
+    print("\nHigh Scores:\n" + high_scores.format())
 
 if __name__ == "__main__":
     main()
