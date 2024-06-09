@@ -84,7 +84,7 @@ class Application(tk.Tk):
         bodyframe.grid(row=1, column=0, padx=5, pady=5, sticky=tk.NSEW)
         bodyframe.grid_columnconfigure([0,1], weight=1)
 
-        ttk.Label(bodyframe, textvariable=self.verb, font=('TkDefaultFont', 18)).grid(row=0, column=0, columnspan=2, padx=5, pady=2)
+        ttk.Label(bodyframe, textvariable=self.verb, font=('TkDefaultFont', 16)).grid(row=0, column=0, columnspan=2, padx=5, pady=2)
         ttk.Label(bodyframe, textvariable=self.translation).grid(row=1, column=0, columnspan=2, padx=5, pady=2)
         ttk.Label(bodyframe, textvariable=self.verbform).grid(row=2, column=0, columnspan=2)
 
@@ -99,7 +99,7 @@ class Application(tk.Tk):
         self.response_label = ttk.Label(footframe, textvariable=self.response, width=16)
         self.response_label.grid(row=0, column=0, sticky=tk.EW, padx=5)
 
-        ttk.Button(footframe, textvariable=self.button_label, command=self.button_press, width=6).grid(row=0, column=1, sticky=tk.E, padx=5)
+        ttk.Button(footframe, textvariable=self.button_label, command=self.button_press, width=8).grid(row=0, column=1, sticky=tk.E, padx=5)
 
         self.input.trace_add("write", self.input_write)
         self.bind("<Return>", self.button_press)
