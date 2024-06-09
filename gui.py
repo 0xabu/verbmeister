@@ -1,9 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import simpledialog, messagebox
+from tkinter import ttk, simpledialog, messagebox
 from typing import Optional
 
-from VerbMeister_Blitz import Game, HighScores
+from core import Game, HighScores
 
 class GameOverDialog(simpledialog.Dialog):
     def __init__(self, score: int, parent: Optional[tk.Misc] = None) -> None:
