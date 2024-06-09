@@ -1,3 +1,4 @@
+import platform
 import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 from typing import Optional
@@ -57,6 +58,10 @@ class HighScoreDialog(simpledialog.Dialog):
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Windows UI scaling
+        if platform.system() == 'Windows':
+            self.tk.call('tk', 'scaling', 1.5)
 
         self.title("VerbMeister Blitz")
 
