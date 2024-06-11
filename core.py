@@ -40,9 +40,9 @@ class Game:
 
     def load_data(self) -> None:
         # Load the CSV file for the game data
-        with open('table_data.csv', encoding='utf-8') as fh:
+        with open('table_data.csv', encoding='utf-8', newline='') as fh:
             for entry in csv.DictReader(fh):
-                q = Question(VerbForm(entry['infinitiv'], entry['form']), entry['example'], entry['englisch'])
+                q = Question(VerbForm(entry['infinitiv'], entry['form']), entry['example'], entry['english'])
 
                 # temporarily skip Konjunktiv II
                 if not q.verbform.form.startswith('Konjunktiv'):
@@ -52,7 +52,7 @@ class Game:
     # Function to save misspelt verbs
     def save_misspelt_verbs(self) -> None:
         with open(MISSPELT_FILENAME, 'w', encoding='utf-8', newline='') as file:
-            writer = csv.DictWriter(file, MISSPELT_FIELDS, extrasaction='ignore')
+            writer = csv.DictWriter(file, MISSPELT_FIELDS)
             writer.writeheader()
             for verb, count in self.misspelt_verbs.items():
                 writer.writerow(dataclasses.asdict(verb) | {MISSPELT_COUNT_FIELDNAME: count})

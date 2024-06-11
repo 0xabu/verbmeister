@@ -53,7 +53,7 @@ class HighScoreDialog(simpledialog.Dialog):
         box.pack()
 
         self.bind("<Return>", self.ok)
-        self.bind("<Escape>", self.cancel)
+        self.bind("<Escape>", self.ok)
 
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
