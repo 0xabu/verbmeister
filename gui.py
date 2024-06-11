@@ -65,6 +65,9 @@ class Application(tk.Tk):
 
         self.title("VerbMeister Blitz")
 
+        self.game = Game()
+        self.highscores = HighScores()
+
         self.verb = tk.StringVar()
         self.verbform = tk.StringVar()
         self.translation = tk.StringVar()
@@ -114,7 +117,7 @@ class Application(tk.Tk):
     def new_game(self):
         self.points.set(0)
         self.lives.set(3)
-        self.game = Game()
+        self.game.reset()
         self.render_question()
 
     def button_press(self, *args):
@@ -179,9 +182,8 @@ class Application(tk.Tk):
     def game_over(self, score: int) -> None:
         d = GameOverDialog(score, self)
         if d.result:
-            hs = HighScores()
-            hs.update(d.result, score)
-            HighScoreDialog(hs.format(), self)
+            self.highscores.update(d.result, score)
+            HighScoreDialog(self.highscores.format(), self)
         resp = messagebox.askquestion(title = 'Spiel Aus!', message="Noch ein Spiel?")
         if resp == 'yes':
             self.new_game()

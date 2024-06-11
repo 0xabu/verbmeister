@@ -30,6 +30,9 @@ class Game:
         self.misspelt_verbs: dict[VerbForm, int]
 
         self.load_data()
+        self.reset()
+
+    def reset(self) -> None:
         self.load_misspelt_verbs()
 
         # we start by repeating the misspelt verbs
