@@ -76,6 +76,7 @@ class Application(tk.Tk):
         self.button_label = tk.StringVar()
         self.response = tk.StringVar()
         self.points = tk.IntVar()
+        self.total = tk.IntVar()
         self.lives = tk.IntVar()
 
         headerframe = ttk.Frame(self)
@@ -84,6 +85,7 @@ class Application(tk.Tk):
 
         ttk.Label(headerframe, text='Punkte:', font='TkHeadingFont').grid(row=0, column=0, sticky=tk.E)
         ttk.Label(headerframe, textvariable=self.points, foreground='blue').grid(row=0, column=1, sticky=tk.W)
+        ttk.Label(headerframe, textvariable=self.total).grid(row=0, column=2, sticky=tk.W)
 
         ttk.Label(headerframe, text='Leben:', font='TkHeadingFont').grid(row=0, column=3, sticky=tk.E)
         ttk.Label(headerframe, textvariable=self.lives, foreground='red').grid(row=0, column=4, sticky=tk.W)
@@ -128,6 +130,7 @@ class Application(tk.Tk):
 
                 if ok:
                     self.points.set(self.points.get() + 1)
+                    self.total.set(self.total.get() + 1)
                 else:
                     self.lives.set(self.lives.get() - 1)
 
